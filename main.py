@@ -11,7 +11,7 @@ class SantaDesignClass(QtWidgets.QMainWindow, santa_design.Ui_MainWindow):
         super(SantaDesignClass, self).__init__(parent)
 
         self.setupUi(self)
-        self.afterGeneration = ShowResultsWidget(names)
+        self.afterGeneration = ShowResultsWidget(people, names)
         self.people = people
         self.couples = couples
         self.names = names
@@ -41,11 +41,12 @@ class SantaDesignClass(QtWidgets.QMainWindow, santa_design.Ui_MainWindow):
         return santas
 
 class ShowResultsWidget(QtWidgets.QWidget, show_results.Ui_Form):
-    def __init__(self, names, parent=None):
+    def __init__(self, people, names, parent=None):
         super(ShowResultsWidget, self).__init__(parent)
         self.setupUi(self)
         self.santas = []
         self.names = names
+        self.people = people
         self.btnSure.hide()
         self.lblSanta.hide()
 
@@ -65,7 +66,7 @@ class ShowResultsWidget(QtWidgets.QWidget, show_results.Ui_Form):
 
     def set_santas(self, santas):
         self.santas = santas
-        self.names_in_list_view = list(self.santas.keys())
+        self.names_in_list_view = list(self.people)
 
         for i in self.names_in_list_view:
             item = QListWidgetItem(self.names[i])
@@ -85,9 +86,9 @@ class ShowResultsWidget(QtWidgets.QWidget, show_results.Ui_Form):
 
 
 def main():
-    Names = {"a": "Ани", "d": "Додо", "r": "Рали", "g": "Георги", "z":"Звезди", "h": "Христо", "v": "Велин"}
+    Names = {"a": "Ани", "d": "Додо", "r": "Рали", "g": "Георги", "z":"Звезди", "h": "Христо", "v": "Велин", "b": "Боян"}
     People = list(Names.keys())
-    Couples = ["ad", "hr"]
+    Couples = ["ad", "hr", "bd", "br", "bg", "sz"]
 
     app = QtWidgets.QApplication(sys.argv)
     form = SantaDesignClass(People, Couples, Names)
