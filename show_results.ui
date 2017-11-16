@@ -42,17 +42,17 @@
     </rect>
    </property>
   </widget>
-  <widget class="QPushButton" name="btnSure">
+  <widget class="QPushButton" name="btnShow">
    <property name="geometry">
     <rect>
-     <x>350</x>
-     <y>50</y>
-     <width>241</width>
-     <height>131</height>
+     <x>330</x>
+     <y>40</y>
+     <width>271</width>
+     <height>71</height>
     </rect>
    </property>
    <property name="text">
-    <string/>
+    <string>Покажи дядото ми</string>
    </property>
   </widget>
   <widget class="QLabel" name="lblSanta">
@@ -66,6 +66,19 @@
    </property>
    <property name="text">
     <string>TextLabel</string>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="btnSend">
+   <property name="geometry">
+    <rect>
+     <x>330</x>
+     <y>130</y>
+     <width>271</width>
+     <height>71</height>
+    </rect>
+   </property>
+   <property name="text">
+    <string>Прати ми имейл с дядо</string>
    </property>
   </widget>
  </widget>

@@ -23,13 +23,15 @@ class Ui_Form(object):
         self.wgtParticipants = QtWidgets.QListWidget(Form)
         self.wgtParticipants.setGeometry(QtCore.QRect(30, 20, 291, 191))
         self.wgtParticipants.setObjectName("wgtParticipants")
-        self.btnSure = QtWidgets.QPushButton(Form)
-        self.btnSure.setGeometry(QtCore.QRect(350, 50, 241, 131))
-        self.btnSure.setText("")
-        self.btnSure.setObjectName("btnSure")
+        self.btnShow = QtWidgets.QPushButton(Form)
+        self.btnShow.setGeometry(QtCore.QRect(330, 40, 271, 71))
+        self.btnShow.setObjectName("btnShow")
         self.lblSanta = QtWidgets.QLabel(Form)
         self.lblSanta.setGeometry(QtCore.QRect(30, 220, 511, 101))
         self.lblSanta.setObjectName("lblSanta")
+        self.btnSend = QtWidgets.QPushButton(Form)
+        self.btnSend.setGeometry(QtCore.QRect(330, 130, 271, 71))
+        self.btnSend.setObjectName("btnSend")
 
         self.retranslateUi(Form)
         QtCore.QMetaObject.connectSlotsByName(Form)
@@ -38,5 +40,7 @@ class Ui_Form(object):
         _translate = QtCore.QCoreApplication.translate
         Form.setWindowTitle(_translate("Form", "Form"))
         self.btnClean.setText(_translate("Form", "Зачисти"))
+        self.btnShow.setText(_translate("Form", "Покажи дядото ми"))
         self.lblSanta.setText(_translate("Form", "TextLabel"))
+        self.btnSend.setText(_translate("Form", "Прати ми имейл с дядо"))
 

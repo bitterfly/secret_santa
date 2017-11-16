@@ -1,20 +1,26 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QListWidget, QListWidgetItem
 import sys
+import smtplib
+
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 
 import santa_design
 import show_results
 import santa
+import secret
 
 class SantaDesignClass(QtWidgets.QMainWindow, santa_design.Ui_MainWindow):
-    def __init__(self, people, couples, names, parent=None):
+    def __init__(self, people, couples, names, emails, parent=None):
         super(SantaDesignClass, self).__init__(parent)
 
         self.setupUi(self)
-        self.afterGeneration = ShowResultsWidget(people, names)
+        self.afterGeneration = ShowResultsWidget(people, names, emails)
         self.people = people
         self.couples = couples
         self.names = names
+        self.emails = emails
 
         self.setCentralWidget(self.buttonWidget)
 
@@ -41,28 +47,68 @@ class SantaDesignClass(QtWidgets.QMainWindow, santa_design.Ui_MainWindow):
         return santas
 
 class ShowResultsWidget(QtWidgets.QWidget, show_results.Ui_Form):
-    def __init__(self, people, names, parent=None):
+    def __init__(self, people, names, emails, parent=None):
         super(ShowResultsWidget, self).__init__(parent)
         self.setupUi(self)
         self.santas = []
         self.names = names
         self.people = people
-        self.btnSure.hide()
+        self.emails = emails
         self.lblSanta.hide()
 
         self.wgtParticipants.itemDoubleClicked.connect(self.choose_participant)
-        self.btnSure.clicked.connect(self.show_santa)
+
+        self.btnShow.clicked.connect(self.show_santa)
+        self.btnShow.hide()
+
+        self.btnSend.clicked.connect(self.send_email)
+        self.btnSend.hide()
 
         self.btnClean.clicked.connect(self.clean_screen)
+        self.btnClean.hide()
 
     def clean_screen(self):
         self.lblSanta.hide()
-        self.btnSure.hide()
+        self.btnShow.hide()
+        self.btnSend.hide()
+        self.btnClean.hide()
+
+    def set_mailing(self):
+        receiver = self.emails[self.current_short_name]
+        msg = self.make_email_message(receiver)
+
+        server = smtplib.SMTP('smtp.gmail.com:587')
+        server.ehlo()
+        server.starttls()
+        server.login(secret.sender, secret.sender_password)
+
+        server.sendmail(secret.sender, receiver, msg)
+
+    def make_message(self):
+        return "\n%s,\nтрябва да купиш подарък на %s\nЛимит за финанси: 25лв." % (self.current_name, self.current_santa)
+
+    def make_email_message(self, receiver):
+        msg = MIMEMultipart("alternative")
+        msg["Sender"] = secret.sender
+        msg["Receiver"] = receiver
+        msg["Subject"] = 'Таен дядо'
+        body = MIMEText(self.make_message(),
+                 "plain", "utf-8")
+        msg.attach(body)
+
+        return msg.as_string().encode('ascii')
+
+
+    def send_email(self):
+        self.btnClean.show()
+        self.set_mailing()
+        self.lblSanta.setText("Email sent.")
 
     def show_santa(self):
-        self.lblSanta.setText("%s,\nтрябва да купиш подарък на\n%s" % (self.current_name, self.current_santa))
+        self.lblSanta.setText(self.make_message())
         self.lblSanta.adjustSize()
         self.lblSanta.show()
+        self.btnClean.show()
 
     def set_santas(self, santas):
         self.santas = santas
@@ -76,22 +122,26 @@ class ShowResultsWidget(QtWidgets.QWidget, show_results.Ui_Form):
         index = self.wgtParticipants.row(item)
         short_name = self.names_in_list_view[index]
         name = self.names[short_name]
-        self.btnSure.setText("Сигурен ли си,\nче си %s?" % name)
-        self.btnSure.show()
+
+        self.lblSanta.setText("")
+        self.btnShow.show()
+        self.btnSend.show()
+        self.lblSanta.show()
+
+
 
         self.current_name = name
+        self.current_short_name = short_name
         self.current_santa = self.names[self.santas[short_name]]
 
         # print(short_name, self.current_name, self.current_santa)
 
 
 def main():
-    Names = {"a": "Ани", "d": "Додо", "r": "Рали", "g": "Георги", "z":"Звезди", "h": "Христо", "v": "Велин", "b": "Боян"}
-    People = list(Names.keys())
-    Couples = ["ad", "hr", "bd", "br", "bg", "sz"]
+    People = list(secret.Names.keys())
 
     app = QtWidgets.QApplication(sys.argv)
-    form = SantaDesignClass(People, Couples, Names)
+    form = SantaDesignClass(People, secret.Couples, secret.Names, secret.Emails)
     form.show()
     app.exec_()
 
