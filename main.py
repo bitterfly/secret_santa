@@ -23,7 +23,7 @@ def valid(people, couples):
     return True
 
 def make_message(giver, taker):
-    return "\n%s,\nтрябва да купиш подарък на %s\nЛимит за финанси: 40лв." % (
+    return "%s, трябва да купиш подарък на %s\n\nЛимит за финанси: 40лв." % (
         giver['name'], taker['name']
     )
 
@@ -38,7 +38,7 @@ def make_email_message(giver, taker):
     return msg.as_string().encode('ascii')
 
 def send_mail(giver, taker):
-    print('will send mail for ', giver, ' --> ', taker)
+    print('Sending mail to %s' % giver['name'])
     receiver = giver['email']
     msg = make_email_message(giver, taker)
 
