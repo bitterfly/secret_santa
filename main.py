@@ -8,18 +8,21 @@ from email.mime.text import MIMEText
 import itertools
 import numpy as np
 
-def get_santas_for(people, couples):
+def get_santas_for(people, exclusions):
     while True:
         permutation = list(np.random.permutation(people))
         hamilton_permutation = [permutation[-1]] + permutation[:-1]
-        if valid(zip(hamilton_permutation, permutation), couples):
+        if valid(zip(hamilton_permutation, permutation), exclusions):
             return {key: value for (key, value) in zip(permutation, hamilton_permutation)}
 
 
-def valid(people, couples):
+def valid(people, exclusions):
     for person, santa in people:
-        if person == santa or (person, santa) in couples or (santa, person) in couples:
+        if person == santa:
             return False
+        for excl in exclusions:
+            if person in excl and santa in excl:
+                return False
     return True
 
 def make_message(giver, taker):
@@ -29,7 +32,7 @@ def make_message(giver, taker):
 
 def make_email_message(giver, taker):
     msg = MIMEMultipart("alternative")
-    msg["From"] = Conf['mail']['email']
+    msg["From"] = '%s <%s>' % (Conf['mail']['name'], Conf['mail']['email'])
     msg["To"] = giver['email']
     msg["Subject"] = 'Таен дядо'
     body = MIMEText(make_message(giver, taker), "plain", "utf-8")
@@ -51,11 +54,10 @@ def send_mail(giver, taker):
         server.starttls()
 
     server.login(Conf['mail']['user'], Conf['mail']['pass'])
-
     server.sendmail(Conf['mail']['email'], giver['email'], msg)
 
 def santas():
-    return get_santas_for(list(Conf['people'].keys()), Conf['couples'])
+    return get_santas_for(list(Conf['people'].keys()), Conf['exclusions'])
 
 def main():
     for (person_id, santa_id) in santas().items():
